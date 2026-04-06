@@ -5,6 +5,7 @@
 {% endblock %}
 
 {% block content %}
+<!-- HERO SECTION -->
     <section class="hero">
 
         <div class="hero-content">
@@ -26,4 +27,61 @@
         </div>
 
     </section>
+
+    <!-- INFO SECTION -->
+    <section class="info">
+
+        <h2>Why Blood Donation Matters</h2>
+
+        <div class="info-container">
+            <div class="info-card">
+                <h3>Save Lives</h3>
+                <p>
+                Every blood donation can save up to three lives.
+                Your help can make a real difference.
+                </p>
+            </div>
+
+            <div class="info-card">
+                <h3>Emergency Support</h3>
+                <p>
+                Hospitals rely on blood donors for accidents,
+                surgeries and medical emergencies.
+                </p>
+            </div>
+
+            <div class="info-card">
+                <h3>Community Strength</h3>
+                <p>
+                Blood donation builds stronger and healthier communities.
+                </p>
+            </div>
+        </div>
+
+    </section>
+
+<!-- CALL TO ACTION -->
+    <section class="cta">
+
+        {% if current_user.is_authenticated %}
+            {% if not current_user.is_donor %}
+                <h2>Become a Life Saver Today</h2>
+                <p>Join the LifeLink network and help those who need blood.</p>
+                <a href="{{ url_for('donor.become_donor') }}" class="cta-btn">Become a Donor</a>
+            {% else %}
+
+            {% endif%}
+        {% else %}
+            <h2>Need Blood?</h2>
+            <p>Register and search for blood Donors in nearby area.</p>
+            <a href="{{ url_for('auth.sign_up') }}" class="cta-btn">Register now</a>
+        {% endif %}
+
+    </section>
+
+<!-- FOOTER -->
+    <footer>
+        <p>© 2026 LifeLink Blood Donation Network</p>
+    </footer>
+
 {% endblock %}

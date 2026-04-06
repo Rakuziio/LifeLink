@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    Home
+{% endblock %}
+
+{% block content %}
+    <section class="hero">
+
+        <div class="hero-content">
+
+            <h1>Connecting Donors. Saving Lives.</h1>
+
+            <p>
+            LifeLink is a platform that helps connect blood donors with people in need.
+            Your one donation can save multiple lives.
+            </p>
+
+            {% if current_user.is_authenticated %}
+                {% if not current_user.is_donor %}
+                    <a href="{{ url_for('donor.become_donor') }}" class="hero-btn">Become a Donor</a>
+                {% endif%}
+            {% else %}
+                <a href="{{ url_for('auth.sign_up') }}" class="hero-btn">Join the community</a>
+            {% endif %}
+        </div>
+
+    </section>
+{% endblock %}

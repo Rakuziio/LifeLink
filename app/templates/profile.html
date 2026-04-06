@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    Profile
+{% endblock %}
+
+{% block content %}
+    <h1>My profile</h1>
+
+    <p><strong>Name: </strong>{{ user.fullname }}</p>
+    <p><strong>Email: </strong>{{ user.email }}</p>
+    
+    {% if not current_user.is_donor %}
+        <a href="{{ url_for('donor.become_donor') }}">Become a donor.</a>
+    {% else %}
+        <p><strong>Phone: </strong>{{ donor.phone }}</p>
+        <p><strong>Age: </strong>{{ donor.age }}</p>
+        <p><strong>Blood group: </strong>{{ donor.blood_type }}</p>
+        <p>You are now a Donor<br>People who need blood may contact you anytime.</p>
+    {% endif %}
+    
+{% endblock %}

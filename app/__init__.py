@@ -17,6 +17,7 @@ def create_app():
 
     from models.user import User
     from models.donor import Donor
+    from models.donor_health import Donor_Health
 
     from routes.auth import auth
     from routes.home import home_bp

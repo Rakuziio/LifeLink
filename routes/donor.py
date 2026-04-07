@@ -52,3 +52,9 @@ def become_donor():
 @donor_bp.route("/donor")
 def donor_page():
     return render_template('donor.html')
+
+@donor_bp.route("/donor_health")
+def donor_health():
+    
+
+    return render_template('donor.html')

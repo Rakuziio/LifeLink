@@ -1,7 +1,7 @@
 from app.extensions import db
 from datetime import datetime
 
-class Donor_Health(db.Model):
+class DonorHealth(db.Model):
     __tablename__ = "donor_health"
     
     id = db.Column(db.Integer, primary_key=True)

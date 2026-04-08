@@ -2,6 +2,7 @@ from flask import Blueprint, render_template, request, redirect, url_for, flash
 from flask_login import login_required, current_user
 from app.extensions import db
 from models.donor import Donor
+from models.donor_health import DonorHealth
 from datetime import datetime
 
 donor_bp = Blueprint('donor', __name__)
@@ -53,8 +54,46 @@ def become_donor():
 def donor_page():
     return render_template('donor.html')
 
-@donor_bp.route("/donor_health")
+@donor_bp.route("/donor-health", methods=['GET', 'POST'])
+@login_required
 def donor_health():
-    
+    if current_user.is_donor:
+        donor = Donor.query.filter_by(user_id=current_user.id).first()
+        health = DonorHealth.query.filter_by(donor_id=donor.id).first()
 
-    return render_template('donor.html')
+        if request.method == "POST":
+            has_hiv = request.form.get("has_hiv") =="yes"
+            has_hepatitis_b = request.form.get("has_hepatitis_b") == "yes"
+            has_hepatitis_c = request.form.get("has_hepatitis_c") == "yes"
+
+            has_syphilis = request.form.get("has_syphilis") == "yes"
+            has_malaria = request.form.get("has_malaria") == "yes"
+            has_diabetes = request.form.get("has_diabetes") == "yes"
+
+            if health:
+                # UPDATE
+                health.has_hiv = has_hiv
+                health.has_hepatitis_b = has_hepatitis_b
+                health.has_hepatitis_c = has_hepatitis_c
+
+                health.has_syphilis = has_syphilis
+                health.has_malaria = has_malaria
+                health.has_diabetes = has_diabetes
+            else:
+                # CREATE
+                health = DonorHealth(
+                    donor_id=donor.id,
+                    has_hiv=has_hiv,
+                    has_hepatitis_b=has_hepatitis_b,
+                    has_hepatitis_c=has_hepatitis_c,
+
+                    has_syphilis=has_syphilis,
+                    has_malaria=has_malaria,
+                    has_diabetes=has_diabetes
+                )
+                db.session.add(health)
+            db.session.commit()
+            return redirect(url_for('home.profile_page'))
+
+
+    return render_template('profile.html', health = health)

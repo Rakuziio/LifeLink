@@ -5,18 +5,108 @@
 {% endblock %}
 
 {% block content %}
-    <h1>My profile</h1>
+<h1>My profile</h1>
 
-    <p><strong>Name: </strong>{{ user.fullname }}</p>
-    <p><strong>Email: </strong>{{ user.email }}</p>
-    
-    {% if not current_user.is_donor %}
-        <a href="{{ url_for('donor.become_donor') }}">Become a donor.</a>
-    {% else %}
-        <p><strong>Phone: </strong>{{ donor.phone }}</p>
-        <p><strong>Age: </strong>{{ donor.age }}</p>
-        <p><strong>Blood group: </strong>{{ donor.blood_type }}</p>
-        <p>You are now a Donor<br>People who need blood may contact you anytime.</p>
-    {% endif %}
-    
+<p><strong>Name:</strong> {{ user.fullname }}</p>
+<p><strong>Email:</strong> {{ user.email }}</p>
+
+{% if not current_user.is_donor %}
+    <a href="{{ url_for('donor.become_donor') }}">Become a donor</a>
+{% else %}
+    <p><strong>Phone:</strong> {{ donor.phone }}</p>
+    <p><strong>Age:</strong> {{ donor.age }}</p>
+    <p><strong>Blood group:</strong> {{ donor.blood_type }}</p>
+
+    <hr>
+
+    <h3>Health Information</h3>
+
+    <form method="POST" action="{{ url_for('donor.donor_health') }}">
+
+        <!-- VIEW MODE -->
+        <div id="view-mode">
+            {% if health %}
+                <p>HIV: {{ 'Yes' if health.has_hiv else 'No' }}</p>
+                <p>Hepatitis B: {{ 'Yes' if health.has_hepatitis_b else 'No' }}</p>
+                <p>Hepatitis C: {{ 'Yes' if health.has_hepatitis_c else 'No' }}</p>
+                <p>Syphilis: {{ 'Yes' if health.has_syphilis else 'No' }}</p>
+                <p>Malaria: {{ 'Yes' if health.has_malaria else 'No' }}</p>
+                <p>Diabetes: {{ 'Yes' if health.has_diabetes else 'No' }}</p>
+            {% else %}
+                <p>No health data yet.</p>
+            {% endif %}
+
+            <button type="button" onclick="enableEdit()">Update Health</button>
+        </div>
+
+        <!-- EDIT MODE -->
+        <div id="edit-mode" style="display: none;">
+
+            <!-- HIV -->
+            <label>HIV:</label><br>
+            <input type="radio" name="has_hiv" value="yes"
+                {% if health and health.has_hiv %}checked{% endif %}> Yes
+            <input type="radio" name="has_hiv" value="no"
+                {% if health and not health.has_hiv %}checked{% endif %}> No
+            <br><br>
+
+            <!-- Hepatitis B -->
+            <label>Hepatitis B:</label><br>
+            <input type="radio" name="has_hepatitis_b" value="yes"
+                {% if health and health.has_hepatitis_b %}checked{% endif %}> Yes
+            <input type="radio" name="has_hepatitis_b" value="no"
+                {% if health and not health.has_hepatitis_b %}checked{% endif %}> No
+            <br><br>
+
+            <!-- Hepatitis C -->
+            <label>Hepatitis C:</label><br>
+            <input type="radio" name="has_hepatitis_c" value="yes"
+                {% if health and health.has_hepatitis_c %}checked{% endif %}> Yes
+            <input type="radio" name="has_hepatitis_c" value="no"
+                {% if health and not health.has_hepatitis_c %}checked{% endif %}> No
+            <br><br>
+
+            <!-- Syphilis -->
+            <label>Syphilis:</label><br>
+            <input type="radio" name="has_syphilis" value="yes"
+                {% if health and health.has_syphilis %}checked{% endif %}> Yes
+            <input type="radio" name="has_syphilis" value="no"
+                {% if health and not health.has_syphilis %}checked{% endif %}> No
+            <br><br>
+
+            <!-- Malaria -->
+            <label>Malaria:</label><br>
+            <input type="radio" name="has_malaria" value="yes"
+                {% if health and health.has_malaria %}checked{% endif %}> Yes
+            <input type="radio" name="has_malaria" value="no"
+                {% if health and not health.has_malaria %}checked{% endif %}> No
+            <br><br>
+
+            <!-- Diabetes -->
+            <label>Diabetes:</label><br>
+            <input type="radio" name="has_diabetes" value="yes"
+                {% if health and health.has_diabetes %}checked{% endif %}> Yes
+            <input type="radio" name="has_diabetes" value="no"
+                {% if health and not health.has_diabetes %}checked{% endif %}> No
+            <br><br>
+
+            <button type="submit">Save</button>
+            <button type="button" onclick="cancelEdit()">Cancel</button>
+        </div>
+
+    </form>
+{% endif %}
+
+<script>
+function enableEdit() {
+    document.getElementById("view-mode").style.display = "none";
+    document.getElementById("edit-mode").style.display = "block";
+}
+
+function cancelEdit() {
+    document.getElementById("view-mode").style.display = "block";
+    document.getElementById("edit-mode").style.display = "none";
+}
+</script>
+
 {% endblock %}

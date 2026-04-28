@@ -6,14 +6,23 @@
 
 {% block content %}
     <form align="center" method="post" action="{{ url_for('auth.sign_up') }}">
+        <br>
         <h1>Sign Up</h1>
-        <label for="fullname">Full name:</label><br>
+        <label>
+            <input type="checkbox" id="bloodBankCheck" name="is_blood_bank">
+            Register as a Blood Bank
+        </label>
+
+        <br><br>
+
+        <label id="nameLabel">Full name:</label><br>
         <input
             autocomplete="off"
             type="text"
             id="fullname"
             name="fullname"
             placeholder="Full name"><br><br>
+
         <label for="email">Email:</label><br>
         <input
             autocomplete="off"
@@ -21,6 +30,16 @@
             id="email"
             name="email"
             placeholder="Enter email"><br><br>
+
+        <div id="bloodBankFields" style="display: none;">
+            <label>Helpline Number</label>
+            <input type="text" name="helpline" placeholder="Helpline Number">
+            <label>Location</label>
+            <input type="text" name="address" placeholder="Address">
+            <label>License Number</label>
+            <input type="text" name="license_number" placeholder="License Number">
+        </div><br>
+
         <label for="password1">Password:</label><br>
         <input
             autocomplete="off"
@@ -40,4 +59,24 @@
         </button>
         <p>Already a memnber? <a href="{{ url_for('auth.login') }}">Login</a></p>
     </form>
+
+<script>
+    const checkbox = document.getElementById("bloodBankCheck");
+    const fields = document.getElementById("bloodBankFields");
+    const label = document.getElementById("nameLabel");
+    const input = document.getElementById("fullname");
+
+    checkbox.addEventListener("change", function () {
+        if (this.checked) {
+            fields.style.display = "block";
+            label.textContent = "Name:";
+            input.placeholder = "Blood bank name";
+        } else {
+            fields.style.display = "none";
+            label.textContent = " Full Name:";
+            input.placeholder = "Full Name";
+        }
+    });
+</script>
+
 {% endblock %}

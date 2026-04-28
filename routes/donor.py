@@ -62,13 +62,31 @@ def donor_health():
         health = DonorHealth.query.filter_by(donor_id=donor.id).first()
 
         if request.method == "POST":
-            has_hiv = request.form.get("has_hiv") =="yes"
-            has_hepatitis_b = request.form.get("has_hepatitis_b") == "yes"
-            has_hepatitis_c = request.form.get("has_hepatitis_c") == "yes"
+            has_hiv = request.form.get("has_hiv") =="true"
+            has_hepatitis_b = request.form.get("has_hepatitis_b") == "true"
+            has_hepatitis_c = request.form.get("has_hepatitis_c") == "true"
 
-            has_syphilis = request.form.get("has_syphilis") == "yes"
-            has_malaria = request.form.get("has_malaria") == "yes"
-            has_diabetes = request.form.get("has_diabetes") == "yes"
+            has_syphilis = request.form.get("has_syphilis") == "true"
+            syphilis_cured = None
+            syphilis_cured_date = None
+            if health.has_syphilis:
+                syphilis_cured = request.form.get("syphilis_cured") == "true"
+                if health.syphilis_cured:
+                    date_str = request.form.get("syphilis_cured_date")
+                    if date_str:
+                        syphilis_cured_date=datetime.strptime(date_str, "%Y-%m-%d").date()
+
+            has_malaria = request.form.get("has_malaria") == "true"
+            malaria_cured = None
+            malaria_cured_date = None
+            if health.has_malaria:
+                malaria_cured = request.form.get("malaria_cured") == "true"
+                if health.malaria_cured:
+                    date_str = request.form.get("malaria_cured_date")
+                    if date_str:
+                        malaria_cured_date=datetime.strptime(date_str, "%Y-%m-%d").date()
+
+            has_diabetes = request.form.get("has_diabetes") == "true"
 
             if health:
                 # UPDATE
@@ -77,7 +95,13 @@ def donor_health():
                 health.has_hepatitis_c = has_hepatitis_c
 
                 health.has_syphilis = has_syphilis
+                health.syphilis_cured=syphilis_cured
+                health.syphilis_cured_date=syphilis_cured_date
+
                 health.has_malaria = has_malaria
+                health.malaria_cured=malaria_cured
+                health.malaria_cured_date=malaria_cured_date
+
                 health.has_diabetes = has_diabetes
             else:
                 # CREATE
@@ -88,7 +112,11 @@ def donor_health():
                     has_hepatitis_c=has_hepatitis_c,
 
                     has_syphilis=has_syphilis,
+                    syphilis_cured=syphilis_cured,
+                    syphilis_cured_date=syphilis_cured_date,
                     has_malaria=has_malaria,
+                    malaria_cured=malaria_cured,
+                    malaria_cured_date=malaria_cured_date,
                     has_diabetes=has_diabetes
                 )
                 db.session.add(health)

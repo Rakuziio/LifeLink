@@ -15,10 +15,10 @@
 {% else %}
     <p><strong>Phone:</strong> {{ donor.phone }}</p>
     <p><strong>Age:</strong> {{ donor.age }}</p>
-    <p><strong>Blood group:</strong> {{ donor.blood_type }}</p>
+    <p><strong>Blood group:</strong> {{ donor.blood_type }}</p><br>
 
     <hr>
-
+    <br>
     <h3>Health Information</h3>
 
     <form method="POST" action="{{ url_for('donor.donor_health') }}">
@@ -32,6 +32,8 @@
                 <p>Syphilis: {{ 'Yes' if health.has_syphilis else 'No' }}</p>
                 <p>Malaria: {{ 'Yes' if health.has_malaria else 'No' }}</p>
                 <p>Diabetes: {{ 'Yes' if health.has_diabetes else 'No' }}</p>
+
+                <!-- Eligibility -->
             {% else %}
                 <p>No health data yet.</p>
             {% endif %}
@@ -44,49 +46,83 @@
 
             <!-- HIV -->
             <label>HIV:</label><br>
-            <input type="radio" name="has_hiv" value="yes"
+            <input type="radio" name="has_hiv" value="true"
                 {% if health and health.has_hiv %}checked{% endif %}> Yes
-            <input type="radio" name="has_hiv" value="no"
+            <input type="radio" name="has_hiv" value="false"
                 {% if health and not health.has_hiv %}checked{% endif %}> No
             <br><br>
 
             <!-- Hepatitis B -->
             <label>Hepatitis B:</label><br>
-            <input type="radio" name="has_hepatitis_b" value="yes"
+            <input type="radio" name="has_hepatitis_b" value="true"
                 {% if health and health.has_hepatitis_b %}checked{% endif %}> Yes
-            <input type="radio" name="has_hepatitis_b" value="no"
+            <input type="radio" name="has_hepatitis_b" value="false"
                 {% if health and not health.has_hepatitis_b %}checked{% endif %}> No
             <br><br>
 
             <!-- Hepatitis C -->
             <label>Hepatitis C:</label><br>
-            <input type="radio" name="has_hepatitis_c" value="yes"
+            <input type="radio" name="has_hepatitis_c" value="true"
                 {% if health and health.has_hepatitis_c %}checked{% endif %}> Yes
-            <input type="radio" name="has_hepatitis_c" value="no"
+            <input type="radio" name="has_hepatitis_c" value="false"
                 {% if health and not health.has_hepatitis_c %}checked{% endif %}> No
             <br><br>
 
             <!-- Syphilis -->
             <label>Syphilis:</label><br>
-            <input type="radio" name="has_syphilis" value="yes"
+            <input type="radio" name="has_syphilis" value="true"
                 {% if health and health.has_syphilis %}checked{% endif %}> Yes
-            <input type="radio" name="has_syphilis" value="no"
+            <input type="radio" name="has_syphilis" value="false"
                 {% if health and not health.has_syphilis %}checked{% endif %}> No
             <br><br>
+            {% if health and health.has_syphilis %}
+                <label>Is it cured?</label><br>
+
+                <input type="radio" name="syphilis_cured" value="true"
+                {% if health.syphilis_cured %}checked{% endif %}> Yes
+
+                <input type="radio" name="syphilis_cured" value="false"
+                {% if health.syphilis_cured == False %}checked{% endif %}> No
+                <br><br>
+
+                {% if health.syphilis_cured %}
+                    <label>Cured Date:</label><br>
+                    <input type="date" name="syphilis_cured_date"
+                    value="{{ health.syphilis_cured_date }}">
+                    <br><br>
+                {% endif %}
+            {% endif %}
 
             <!-- Malaria -->
             <label>Malaria:</label><br>
-            <input type="radio" name="has_malaria" value="yes"
+            <input type="radio" name="has_malaria" value="true"
                 {% if health and health.has_malaria %}checked{% endif %}> Yes
-            <input type="radio" name="has_malaria" value="no"
+            <input type="radio" name="has_malaria" value="false"
                 {% if health and not health.has_malaria %}checked{% endif %}> No
             <br><br>
+            {% if health and health.has_malaria %}
+                <label>Is it cured?</label><br>
+
+                <input type="radio" name="malaria_cured" value="true"
+                {% if health.malaria_cured %}checked{% endif %}> Yes
+
+                <input type="radio" name="malaria_cured" value="false"
+                {% if health.malaria_cured == False %}checked{% endif %}> No
+                <br><br>
+
+                {% if health.malaria_cured %}
+                    <label>Cured Date:</label><br>
+                    <input type="date" name="malaria_cured_date"
+                    value="{{ health.malaria_cured_date }}">
+                    <br><br>
+                {% endif %}
+            {% endif %}
 
             <!-- Diabetes -->
             <label>Diabetes:</label><br>
-            <input type="radio" name="has_diabetes" value="yes"
+            <input type="radio" name="has_diabetes" value="true"
                 {% if health and health.has_diabetes %}checked{% endif %}> Yes
-            <input type="radio" name="has_diabetes" value="no"
+            <input type="radio" name="has_diabetes" value="false"
                 {% if health and not health.has_diabetes %}checked{% endif %}> No
             <br><br>
 

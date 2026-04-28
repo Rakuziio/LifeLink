@@ -18,6 +18,9 @@ def create_app():
     from models.user import User
     from models.donor import Donor
     from models.donor_health import DonorHealth
+    from models.bloodbanks import BloodBank
+    from models.bloodbanks import BloodStock
+    from models.user import BloodRequest
 
     from routes.auth import auth
     from routes.home import home_bp

@@ -9,6 +9,11 @@ class Donor(db.Model):
     gender = db.Column(db.String(20), nullable=True)
     dob = db.Column(db.Date, nullable=False)
     phone = db.Column(db.String(15), unique=True)
+    availability = db.Column(db.Boolean, nullable=False)
+    
+    last_donation_date = db.Column(db.DateTime)
+    total_donations = db.Column(db.Integer, default=0)
+    last_quantity_ml = db.Column(db.Integer)
 
     @property
     def age(self):

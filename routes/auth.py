@@ -1,7 +1,7 @@
 from flask import Blueprint, render_template, redirect, url_for, flash, request
 from werkzeug.security import check_password_hash, generate_password_hash
 from models.user import User
-from models.donor import Donor
+from models.bloodbanks import BloodBank
 from app.extensions import db
 from flask_login import login_user, login_required, current_user, logout_user
 
@@ -14,6 +14,14 @@ def sign_up():
         email = request.form.get('email')
         password1 = request.form.get('password1')
         password2 = request.form.get('password2')
+        
+        is_blood_bank = request.form.get('is_blood_bank')
+        role = 'blood_bank' if is_blood_bank else 'user'
+
+        if role == 'blood_bank':
+            helpline = request.form.get('helpline')
+            address = request.form.get('address')
+            license_number = request.form.get('license')
 
         #validation
         if password1!=password2:
@@ -34,12 +42,25 @@ def sign_up():
             fullname = fullname,
             email = email,
             password = hashed_password,
-            role = 'nuser'
+            role = role
         )
-
         #save to database
         db.session.add(new_user)
         db.session.commit()
+
+        if role == 'blood_bank':
+            blood_bank = BloodBank(
+                user_id = new_user.id,
+                helpline_number = helpline,
+                address = address,
+                license_number = license_number
+            )
+            if role == 'blood_bank' and not helpline:
+                flash("Helpline number is required for blood banks", "error")
+
+            #save to database
+            db.session.add(blood_bank)
+            db.session.commit()
 
         flash('Account created succesfully!', category='success')
         return redirect(url_for('auth.login'))
@@ -62,6 +83,8 @@ def login():
             flash("Invalid email or password", category='error')
     
     return render_template('login.html')
+
+@auth.route("/")
 
 @auth.route("/logout")
 @login_required

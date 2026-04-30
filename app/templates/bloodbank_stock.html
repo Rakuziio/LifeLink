@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    bloodbank_stock
+{% endblock %}
+
+{% block content %}
+
+<h1>{{ bloodbank.user.fullname }} Stock</h1>
+
+<form method="POST">
+
+    <!-- Blood Type -->
+    <select name="blood_type" required>
+        <option value="" disabled selected>Select Blood Group</option>
+        <option value="A+">A+</option>
+        <option value="A-">A-</option>
+        <option value="B+">B+</option>
+        <option value="B-">B-</option>
+        <option value="O+">O+</option>
+        <option value="O-">O-</option>
+        <option value="AB+">AB+</option>
+        <option value="AB-">AB-</option>
+    </select>
+
+    <!-- Quantity -->
+    <input 
+        type="number" 
+        name="quantity_ml" 
+        placeholder="Quantity (ml)" 
+        min="0" 
+        required
+    >
+
+    <!-- ACTION BUTTONS -->
+    <div style="margin-top:10px;">
+        <button formaction="{{ url_for('dashboard.add_blood_stock') }}">
+            ➕ Add
+        </button>
+
+        <button formaction="{{ url_for('dashboard.reduce_blood_stock') }}">
+            ➖ Reduce
+        </button>
+
+        <button formaction="{{ url_for('dashboard.update_blood_stock') }}">
+            ✏️ Update
+        </button>
+    </div>
+
+</form>
+
+<h2>Current Stock</h2>
+
+<table border="1" cellpadding="10">
+    <tr>
+        <th>Blood Type</th>
+        <th>Quantity (ml)</th>
+    </tr>
+
+    {% for s in stock %}
+    <tr>
+        <td>{{ s.blood_type }}</td>
+        <td>{{ s.quantity_ml }}</td>
+    </tr>
+    {% endfor %}
+</table>
+
+{% endblock %}

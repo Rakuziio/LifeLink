@@ -25,10 +25,16 @@ def create_app():
     from routes.auth import auth
     from routes.home import home_bp
     from routes.donor import donor_bp
+    from routes.dashboard import dashboard_bp
+    from routes.request import request_bp
+    from routes.admin import admin_bp
 
-    app.register_blueprint(auth, url_prefix='/')
+    app.register_blueprint(auth, url_prefix='/auth')
     app.register_blueprint(home_bp, url_prefix='/')
-    app.register_blueprint(donor_bp, url_prefix='/')
+    app.register_blueprint(donor_bp, url_prefix='/donor')
+    app.register_blueprint(dashboard_bp, url_prefix='/dashboard')
+    app.register_blueprint(request_bp, url_prefix='/request')
+    app.register_blueprint(admin_bp, url_prefix='/admin')
 
     return app
 

@@ -6,18 +6,22 @@ class BloodBank(db.Model):
     id = db.Column(db.Integer, primary_key=True)
 
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    user = db.relationship('User', backref='bloodbank')
+    stock = db.relationship('BloodStock', backref='bloodbank', lazy=True)
     
-    name = db.Column(db.String(100))
-    address = db.Column(db.String(200))
+    state = db.Column(db.String(20), nullable=False)
+    district = db.Column(db.String(20), nullable=False)
+    city = db.Column(db.String(50), nullable=True)
     helpline_number = db.Column(db.String(15))
-    license_number = db.Column(db.String(50))
-
-    has_hospital = db.Column(db.Boolean, nullable=False)
-    hospital_name = db.Column(db.String(200), nullable=True)
+    license_number = db.Column(db.String(100), nullable=False)
 
 class BloodStock(db.Model):
     __tablename__ = "blood_stock"
 
+    __table_args__ = (
+        db.UniqueConstraint('bloodbank_id', 'blood_type', name='unique_blood_per_bank'),
+    )
+    
     id = db.Column(db.Integer, primary_key=True)
 
     bloodbank_id = db.Column(db.Integer, db.ForeignKey('blood_banks.id'))

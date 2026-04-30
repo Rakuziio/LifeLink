@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, redirect, url_for, flash, request
+from flask import Blueprint, render_template, redirect, url_for, flash, request, session
 from werkzeug.security import check_password_hash, generate_password_hash
 from models.user import User
 from models.bloodbanks import BloodBank
@@ -20,8 +20,10 @@ def sign_up():
 
         if role == 'blood_bank':
             helpline = request.form.get('helpline')
-            address = request.form.get('address')
-            license_number = request.form.get('license')
+            state = request.form.get('state')
+            district = request.form.get('district')
+            city = request.form.get('city')
+            license_number = request.form.get('license_number')
 
         #validation
         if password1!=password2:
@@ -52,11 +54,13 @@ def sign_up():
             blood_bank = BloodBank(
                 user_id = new_user.id,
                 helpline_number = helpline,
-                address = address,
+                state = state,
+                district = district,
+                city = city,
                 license_number = license_number
             )
-            if role == 'blood_bank' and not helpline:
-                flash("Helpline number is required for blood banks", "error")
+            if role == 'blood_bank' and not license_number:
+                flash("License number is required for blood banks", "error")
 
             #save to database
             db.session.add(blood_bank)

@@ -6,6 +6,7 @@
         <link rel="stylesheet" href="{{ url_for('static', filename='css/flash.css') }}">
         <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
         <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/request_table.css') }}">
 
         <title>
             {% block title %}
@@ -32,13 +33,23 @@
                 <a href="{{ url_for('home.home_page') }}">Home</a>
                 <a href="{{ url_for('donor.donor_page') }}">Donors</a>
                 {% if current_user.is_authenticated %}
-                    <a href="{{ url_for('home.profile_page') }}">Profile</a>
+                    <a href="{{ url_for('request.my_request') }}">My Request</a>
+                    <a href="{{ url_for('request.request_page') }}">Request Blood</a>
+                    {% if current_user.role == 'blood_bank' %}
+                        <a href="{{ url_for('dashboard.dashboard_page') }}">Dashboard</a>
+                        <a href="{{ url_for('dashboard.bloodbank_requests') }}">Requests</a>
+                        <a href="{{ url_for('dashboard.bloodbank_stock') }}">My Stock</a>
+                    {% else %}
+                        <a href="{{ url_for('home.profile_page') }}">Profile</a>
+                    {% endif %}
+                    {% if current_user.is_admin %}
+                        <a href="{{ url_for('admin.dashboard') }}">Admin</a>
+                    {% endif %}
                     <a href="{{ url_for('auth.logout') }}">Logout</a>
                 {% else %}
                     <a href="{{ url_for('auth.login') }}">Login</a>
                     <a href="{{ url_for('auth.sign_up') }}">Sign Up</a>
-                {% endif %}
-                
+                {% endif %}    
             </nav>
         </header>
 

@@ -1,0 +1,142 @@
+{% extends "base.html" %}
+
+{% block content %}
+<br><h1>Search for blood banks</h1><br>
+<form method="GET" action="/request">
+
+    <label>State:</label>
+    <select name="state" id="state" required>
+        <option value="">Select State</option>
+    </select>
+
+    <label>District:</label>
+    <select name="district" id="district" required>
+        <option value="">Select District</option>
+    </select>
+
+    <button type="submit">Search</button><br><br>
+
+</form>
+{% if bloodbanks %}
+    {% if request.args.get('state') %}
+        <p>Showing results for {{ request.args.get('state') }} - {{ request.args.get('district') }}</p>
+    {% else %}
+        <p>Showing all available blood banks</p>
+    {% endif %}<br>
+    {% for bank in bloodbanks %}
+    <div class="bank-card">
+
+        <h3>{{ bank.user.fullname }}</h3>
+        <p>{{ bank.state }} - {{ bank.district }}</p>
+        <p>{{ bank.helpline_number }}</p>
+
+        <strong>Available Blood:</strong>
+
+        <div class="blood-grid">
+            {% for s in bank.stock %}
+                <div class="blood-box
+                    {% if s.quantity_ml == 0 %}out
+                    {% elif s.quantity_ml < 200 %}low
+                    {% else %}available
+                    {% endif %}
+                ">
+                    {{ s.blood_type }}<br>
+
+                    {% if s.quantity_ml == 0 %}
+                        Out
+                    {% else %}
+                        {{ s.quantity_ml }} ml
+                    {% endif %}
+                </div>
+            {% endfor %}
+        </div>
+
+        <button class="request-btn" onclick="openRequestModal('{{ bank.id }}')">
+            Request Blood
+        </button>
+
+    </div>
+    {% endfor %}
+{% else %}
+    <p>No blood banks found.</p>
+{% endif %}
+
+<!-- Request Modal -->
+ <div id="requestModal" class="modal">
+    <div class="modal-content">
+        <span onclick="closeModal()" class="close">&times;</span>
+
+        <h2>Blood Request Form</h2>
+
+        <form method="POST" action="/send_request">
+            <input type="hidden" name="bloodbank_id" id="bloodbank_id">
+
+            <label>Patient Name</label>
+            <input type="text" name="patient_name" required>
+
+            <label for="blood_type">Blood Group:</label><br>
+                <select name="blood_type" id="blood_type" required>
+                    <option value="" disable selected>Select blood group</option>
+                    <option value="A+">A+</option>
+                    <option value="A-">A-</option>
+                    <option value="B+">B+</option>
+                    <option value="B-">B-</option>
+                    <option value="O+">O+</option>
+                    <option value="O-">O-</option>
+                    <option value="AB+">AB+</option>
+                    <option value="AB-">AB-</option>
+                </select>
+
+            <label>Hospital Name</label>
+            <input type="text" name="hospital_name" required>
+
+            <label>Units Required</label>
+            <input type="number" name="units" required>
+
+            <label>Contact</label>
+            <input type="text" name="contact" required>
+
+            <button type="submit">Submit Request</button>
+        </form>
+    </div>
+</div>
+
+<script>
+fetch("/static/data/india_locations.json")
+.then(res => res.json())
+.then(data => {
+
+    const stateSelect = document.getElementById("state");
+    const districtSelect = document.getElementById("district");
+
+    // Load states
+    data.forEach((stateObj, index) => {
+        stateSelect.innerHTML += `<option value="${stateObj.stateName}">${stateObj.stateName}</option>`;
+    });
+
+    // When state changes
+    stateSelect.addEventListener("change", () => {
+        districtSelect.innerHTML = '<option value="">Select District</option>';
+
+        const selectedState = data.find(
+            state => state.stateName === stateSelect.value
+        );
+
+        selectedState.districts.forEach(district => {
+            districtSelect.innerHTML += `<option value="${district.name}">${district.name}</option>`;
+        });
+    });
+
+});
+</script>
+<script>
+function openRequestModal(bankId) {
+    document.getElementById("requestModal").style.display = "block";
+    document.getElementById("bloodbank_id").value = bankId;
+}
+
+function closeModal() {
+    document.getElementById("requestModal").style.display = "none";
+}
+</script>
+{% endblock %}

@@ -32,4 +32,4 @@ class BloodRequest(db.Model):
     status = db.Column(db.String(20), default="pending")  
     # pending / approved / rejected / completed
 
-    request_date = db.Column(db.DateTime, default=db.func.current_timestamp())
+    request_date = db.Column(db.Date, default=db.func.current_date())

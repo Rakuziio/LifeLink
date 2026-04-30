@@ -16,7 +16,23 @@
     <p><strong>Phone:</strong> {{ donor.phone }}</p>
     <p><strong>Age:</strong> {{ donor.age }}</p>
     <p><strong>Blood group:</strong> {{ donor.blood_type }}</p><br>
+    <p><strong>Status:</strong> 
+        {% if donor.availability %}
+            <span style="color:green;">Available</span>
+        {% else %}
+            <span style="color:red;">Not Available</span>
+        {% endif %}
+    </p>
 
+    <form method="POST" action="{{ url_for('donor.toggle_availability', donor_id=donor.id) }}">
+        <button type="submit">
+            {% if donor.availability %}
+                Set Unavailable
+            {% else %}
+                Set Available
+            {% endif %}
+        </button>
+    </form><br>
     <hr>
     <br>
     <h3>Health Information</h3>
@@ -26,14 +42,12 @@
         <!-- VIEW MODE -->
         <div id="view-mode">
             {% if health %}
-                <p>HIV: {{ 'Yes' if health.has_hiv else 'No' }}</p>
-                <p>Hepatitis B: {{ 'Yes' if health.has_hepatitis_b else 'No' }}</p>
-                <p>Hepatitis C: {{ 'Yes' if health.has_hepatitis_c else 'No' }}</p>
-                <p>Syphilis: {{ 'Yes' if health.has_syphilis else 'No' }}</p>
-                <p>Malaria: {{ 'Yes' if health.has_malaria else 'No' }}</p>
-                <p>Diabetes: {{ 'Yes' if health.has_diabetes else 'No' }}</p>
-
-                <!-- Eligibility -->
+                <p>HIV: {{ 'Positive' if health.has_hiv else 'Negative' }}</p>
+                <p>Hepatitis B: {{ 'Positive' if health.has_hepatitis_b else 'Negative' }}</p>
+                <p>Hepatitis C: {{ 'Positive' if health.has_hepatitis_c else 'Negative' }}</p>
+                <p>Syphilis: {{ 'Positive' if health.has_syphilis else 'Negative' }}</p>
+                <p>Malaria: {{ 'Positive' if health.has_malaria else 'Negative' }}</p>
+                <p>Diabetes: {{ 'Positive' if health.has_diabetes else 'Negative' }}</p>
             {% else %}
                 <p>No health data yet.</p>
             {% endif %}
@@ -75,23 +89,6 @@
             <input type="radio" name="has_syphilis" value="false"
                 {% if health and not health.has_syphilis %}checked{% endif %}> No
             <br><br>
-            {% if health and health.has_syphilis %}
-                <label>Is it cured?</label><br>
-
-                <input type="radio" name="syphilis_cured" value="true"
-                {% if health.syphilis_cured %}checked{% endif %}> Yes
-
-                <input type="radio" name="syphilis_cured" value="false"
-                {% if health.syphilis_cured == False %}checked{% endif %}> No
-                <br><br>
-
-                {% if health.syphilis_cured %}
-                    <label>Cured Date:</label><br>
-                    <input type="date" name="syphilis_cured_date"
-                    value="{{ health.syphilis_cured_date }}">
-                    <br><br>
-                {% endif %}
-            {% endif %}
 
             <!-- Malaria -->
             <label>Malaria:</label><br>
@@ -100,23 +97,6 @@
             <input type="radio" name="has_malaria" value="false"
                 {% if health and not health.has_malaria %}checked{% endif %}> No
             <br><br>
-            {% if health and health.has_malaria %}
-                <label>Is it cured?</label><br>
-
-                <input type="radio" name="malaria_cured" value="true"
-                {% if health.malaria_cured %}checked{% endif %}> Yes
-
-                <input type="radio" name="malaria_cured" value="false"
-                {% if health.malaria_cured == False %}checked{% endif %}> No
-                <br><br>
-
-                {% if health.malaria_cured %}
-                    <label>Cured Date:</label><br>
-                    <input type="date" name="malaria_cured_date"
-                    value="{{ health.malaria_cured_date }}">
-                    <br><br>
-                {% endif %}
-            {% endif %}
 
             <!-- Diabetes -->
             <label>Diabetes:</label><br>

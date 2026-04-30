@@ -5,5 +5,116 @@
 {% endblock %}
 
 {% block content %}
-    <h1>Donors list</h1>
+<h1>Donor list</h1>
+<form method="GET">
+    
+    <label>State:</label>
+    <select name="state" id="state">
+        <option value="" disabled selected>Select State</option>
+    </select>
+
+    <label>District:</label>
+    <select name="district" id="district">
+        <option value="" disabled selected>Select District</option>
+    </select>
+
+    <!-- Availability -->
+    <select name="availability">
+        <option value="">All</option>
+        <option value="available" {% if selected_availability=='available' %}selected{% endif %}>Available</option>
+        <option value="unavailable" {% if selected_availability=='unavailable' %}selected{% endif %}>Unavailable</option>
+    </select>
+
+    <button type="submit">Filter</button>
+    <a href="{{ url_for('donor.donor_page') }}">Reset</a>
+</form>
+
+<div class="card-container">
+    {% for donor in donors %}
+        <div class="donor-card">
+
+            <h3>{{ donor.user.fullname }}</h3>
+            <p>{{ donor.state }} - {{ donor.district }}</p>
+
+            <p>
+                Status:
+                {% if donor.availability %}
+                    <span style="color:green;">Available</span>
+                {% else %}
+                    <span style="color:red;">Unavailable</span>
+                {% endif %}
+            </p>
+            <br><hr><br>
+
+            {% set has_long_term =
+                donor.health.has_hiv
+                or donor.health.has_hepatitis_b
+                or donor.health.has_hepatitis_c
+            %}
+            {% set has_short_term =
+                donor.health.has_malaria
+                or donor.health.has_syphilis
+                or donor.health.has_diabetes
+            %}
+            <p>
+                {% if has_long_term %}
+                    <span style="color:red;">Suffering from permanent health condition. Adviced not to donate</span>
+                {% elif has_short_term %}
+                    Suffering from short-term health condition. Adviced not to donate until cured.
+                {% else %}
+                    <span style="color:green;">Health - Donatable</span>
+                {% endif %}
+            </p>
+
+        </div>
+    {% endfor %}
+</div>
+
+
+<!-- FETCH Locations -->
+<script>
+const selectedState = "{{ selected_state or '' }}";
+const selectedDistrict = "{{ selected_district or '' }}";
+
+fetch("{{ url_for('static', filename='data/india_locations.json') }}")
+.then(res => res.json())
+.then(data => {
+
+    const stateSelect = document.getElementById("state");
+    const districtSelect = document.getElementById("district");
+
+    // Load states
+    data.forEach(stateObj => {
+        const selected = stateObj.stateName === selectedState ? "selected" : "";
+        stateSelect.innerHTML += `<option value="${stateObj.stateName}" ${selected}>${stateObj.stateName}</option>`;
+    });
+
+    // Load districts if state already selected
+    function loadDistricts(stateName) {
+        districtSelect.innerHTML = '<option value="">Select District</option>';
+
+        const selectedStateObj = data.find(
+            s => s.stateName === stateName
+        );
+
+        if (selectedStateObj) {
+            selectedStateObj.districts.forEach(d => {
+                const selected = d.name === selectedDistrict ? "selected" : "";
+                districtSelect.innerHTML += `<option value="${d.name}" ${selected}>${d.name}</option>`;
+            });
+        }
+    }
+
+    // If page reload with selected state
+    if (selectedState) {
+        loadDistricts(selectedState);
+    }
+
+    // On change
+    stateSelect.addEventListener("change", () => {
+        loadDistricts(stateSelect.value);
+    });
+
+});
+</script>
 {% endblock %}

@@ -7,6 +7,40 @@ from datetime import datetime
 
 donor_bp = Blueprint('donor', __name__)
 
+
+@donor_bp.route("/donor")
+def donor_page():
+    state = request.args.get("state")
+    district = request.args.get("district")
+    availability = request.args.get("availability")
+
+    query = Donor.query
+
+    # 🔍 Apply filters only if they exist
+    if state:
+        query = query.filter(Donor.state == state)
+
+    if district:
+        query = query.filter(Donor.district == district)
+
+    if availability:
+        if availability == "available":
+            query = query.filter(Donor.availability == True)
+        elif availability == "unavailable":
+            query = query.filter(Donor.availability == False)
+
+    donors = query.all()
+
+    return render_template(
+        "donor.html",
+        donors=donors,
+        selected_state=state,
+        selected_district=district,
+        selected_availability=availability
+    )
+    return render_template('donor.html', donors=donors)
+
+
 @donor_bp.route("/become-donor", methods=['GET', 'POST'])
 @login_required
 def become_donor():
@@ -19,6 +53,7 @@ def become_donor():
         dob=datetime.strptime(request.form.get('dob'), "%Y-%m-%d").date()
         state=request.form.get('state')
         city=request.form.get('city')
+        district=request.form.get('district')
         gender=request.form.get('gender')
         phone=request.form.get('phone')
 
@@ -29,6 +64,7 @@ def become_donor():
             dob=dob,
             state=state,
             city=city,
+            district=district,
             gender=gender,
             phone=phone
         )
@@ -50,10 +86,6 @@ def become_donor():
     return render_template('donor_signup.html')
 
 
-@donor_bp.route("/donor")
-def donor_page():
-    return render_template('donor.html')
-
 @donor_bp.route("/donor-health", methods=['GET', 'POST'])
 @login_required
 def donor_health():
@@ -67,24 +99,7 @@ def donor_health():
             has_hepatitis_c = request.form.get("has_hepatitis_c") == "true"
 
             has_syphilis = request.form.get("has_syphilis") == "true"
-            syphilis_cured = None
-            syphilis_cured_date = None
-            if health.has_syphilis:
-                syphilis_cured = request.form.get("syphilis_cured") == "true"
-                if health.syphilis_cured:
-                    date_str = request.form.get("syphilis_cured_date")
-                    if date_str:
-                        syphilis_cured_date=datetime.strptime(date_str, "%Y-%m-%d").date()
-
             has_malaria = request.form.get("has_malaria") == "true"
-            malaria_cured = None
-            malaria_cured_date = None
-            if health.has_malaria:
-                malaria_cured = request.form.get("malaria_cured") == "true"
-                if health.malaria_cured:
-                    date_str = request.form.get("malaria_cured_date")
-                    if date_str:
-                        malaria_cured_date=datetime.strptime(date_str, "%Y-%m-%d").date()
 
             has_diabetes = request.form.get("has_diabetes") == "true"
 
@@ -95,12 +110,7 @@ def donor_health():
                 health.has_hepatitis_c = has_hepatitis_c
 
                 health.has_syphilis = has_syphilis
-                health.syphilis_cured=syphilis_cured
-                health.syphilis_cured_date=syphilis_cured_date
-
                 health.has_malaria = has_malaria
-                health.malaria_cured=malaria_cured
-                health.malaria_cured_date=malaria_cured_date
 
                 health.has_diabetes = has_diabetes
             else:
@@ -112,11 +122,8 @@ def donor_health():
                     has_hepatitis_c=has_hepatitis_c,
 
                     has_syphilis=has_syphilis,
-                    syphilis_cured=syphilis_cured,
-                    syphilis_cured_date=syphilis_cured_date,
                     has_malaria=has_malaria,
-                    malaria_cured=malaria_cured,
-                    malaria_cured_date=malaria_cured_date,
+
                     has_diabetes=has_diabetes
                 )
                 db.session.add(health)
@@ -125,3 +132,14 @@ def donor_health():
 
 
     return render_template('profile.html', health = health)
+
+
+@donor_bp.route('/toggle-availability/<int:donor_id>', methods=['POST'])
+def toggle_availability(donor_id):
+    donor = Donor.query.get_or_404(donor_id)
+    
+    donor.availability = not donor.availability
+    
+    db.session.commit()
+    
+    return redirect(request.referrer)

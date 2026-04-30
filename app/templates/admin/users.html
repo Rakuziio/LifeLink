@@ -5,26 +5,29 @@
 
 <form method="GET" action="{{ url_for('admin.users') }}" class="filter-bar">Filter by:
 
-    <select name="role">
-        <option value="">All Roles</option>
-        <option value="user" {{ 'selected' if request.args.get('role') == 'user' else '' }}>User</option>
-        <option value="blood_bank" {{ 'selected' if request.args.get('role') == 'blood_bank' else '' }}>Blood Bank</option>
-    </select>
+  <label>Role</label>
+  <select name="role">
+      <option value="" disabled selected>Select</option>
+      <option value="user" {{ 'selected' if request.args.get('role') == 'user' else '' }}>User</option>
+      <option value="blood_bank" {{ 'selected' if request.args.get('role') == 'blood_bank' else '' }}>Blood Bank</option>
+  </select>
 
-    <select name="is_verified">
-        <option value="">Verification</option>
-        <option value="true" {{ 'selected' if request.args.get('is_verified') == 'true' else '' }}>Verified</option>
-        <option value="false" {{ 'selected' if request.args.get('is_verified') == 'false' else '' }}>Not Verified</option>
-    </select>
+  <label>Verification</label>
+  <select name="is_verified">
+      <option value="" disabled selected>Select</option>
+      <option value="true" {{ 'selected' if request.args.get('is_verified') == 'true' else '' }}>Verified</option>
+      <option value="false" {{ 'selected' if request.args.get('is_verified') == 'false' else '' }}>Not Verified</option>
+  </select>
 
-    <select name="is_donor">
-        <option value="">Donor</option>
-        <option value="true" {{ 'selected' if request.args.get('is_donor') == 'true' else '' }}>Donor</option>
-        <option value="false" {{ 'selected' if request.args.get('is_donor') == 'false' else '' }}>Not Donor</option>
-    </select>
+  <label>Donor</label>
+  <select name="is_donor">
+      <option value="" disabled selected>Select</option>
+      <option value="true" {{ 'selected' if request.args.get('is_donor') == 'true' else '' }}>Donor</option>
+      <option value="false" {{ 'selected' if request.args.get('is_donor') == 'false' else '' }}>Not Donor</option>
+  </select>
 
-    <button type="submit">Apply</button>
-    <a href="{{ url_for('admin.users') }}" class="reset-btn">Reset</a>
+  <button type="submit">Apply</button>
+  <a href="{{ url_for('admin.users') }}" class="reset-btn">Reset</a>
 </form><br>
 
 <table class="table">
@@ -53,6 +56,16 @@
       <a href="{{ url_for('admin.delete_user', user_id=u.id) }}"
         class="btn btn-dark btn-sm"
         onclick="return confirm('Are you sure?')">🗑 Delete</a>
+
+      {% if u.role == 'blood_bank' %}
+      <form method="POST" action="{{ url_for('admin.verify_bloodbank', user_id=u.id) }}">
+        <button type="submit"
+            class="btn btn-sm {{ 'btn-success' if not u.is_verified else 'btn-warning' }}">
+            {{ 'Verify' if not u.is_verified else 'Unverify' }}
+        </button>
+      {% endif %}
+      
+</form>
     </td>
   </tr>
   {% endfor %}

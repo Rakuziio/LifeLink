@@ -39,15 +39,25 @@ box-shadow: 0 4px 10px rgba(0,0,0,0.05);
 }
 
 .blood-box {
-    padding: 10px;
+    padding: 8px;
     border-radius: 8px;
+    font-size: 13px;
+    min-width: 70px;
     text-align: center;
-    font-weight: bold;
 }
 
-.available { background: #e6f9ec; color: #1a7f37; }
+.health-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.available { background: #e6f9ec; color: #155724; }
 .low { background: #fff4e5; color: #b26a00; }
 .out { background: #fdecea; color: #b91c1c; }
+
+.good { background-color: #d4edda; color: #155724; }
+.bad { background-color: #f8d7da; color: #721c24; }
 
 .request-btn {
     margin-top: 10px;
@@ -90,4 +100,15 @@ box-shadow: 0 4px 10px rgba(0,0,0,0.05);
     border-radius: 6px;
     text-decoration: none;
     color: black;
+}
+
+.card-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 20px;
+}
+.donor-card {
+    padding: 15px;
+    border-radius: 10px;
+    background: #e9ecef;
 }

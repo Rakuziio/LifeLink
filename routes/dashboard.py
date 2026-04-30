@@ -1,7 +1,7 @@
 from flask import Blueprint, render_template, redirect, url_for, flash, request, session
 from models.bloodbanks import BloodBank
 from models.bloodbanks import BloodStock
-from models.user import BloodRequest
+from models.user import BloodRequest, User
 from app.extensions import db
 from flask_login import login_required, current_user
 
@@ -11,15 +11,53 @@ dashboard_bp = Blueprint('dashboard', __name__)
 @login_required
 def dashboard_page():
     bloodbank = BloodBank.query.filter_by(user_id=current_user.id).first()
-    return render_template('bloodbank_dashboard.html', bloodbank=bloodbank)
+
+    total_users = User.query.count()
+    total_donors = User.query.filter_by(is_donor=True).count()
+    total_bloodbanks = BloodBank.query.count()
+
+    total_requests = BloodRequest.query.filter_by(bloodbank_id=bloodbank.id).count()
+    pending_requests = BloodRequest.query.filter_by(
+        bloodbank_id=bloodbank.id, status='pending'
+    ).count()
+
+    approved_requests = BloodRequest.query.filter_by(
+        bloodbank_id=bloodbank.id, status='approved'
+    ).count()
+
+    rejected_requests = BloodRequest.query.filter_by(
+        bloodbank_id=bloodbank.id, status='rejected'
+    ).count()
+
+    cancelled_requests = BloodRequest.query.filter_by(
+        bloodbank_id=bloodbank.id, status='cancelled'
+    ).count()
+
+    completed_requests = BloodRequest.query.filter_by(
+        bloodbank_id=bloodbank.id, status='completed'
+    ).count()
+
+    return render_template(
+        'bloodbank_dashboard.html',
+        bloodbank=bloodbank,
+        total_users=total_users,
+        total_donors=total_donors,
+        total_bloodbanks=total_bloodbanks,
+        total_requests=total_requests,
+        pending_requests=pending_requests,
+        approved_requests=approved_requests,
+        rejected_requests=rejected_requests,
+        cancelled_requests=cancelled_requests,
+        completed_requests=completed_requests
+    )
 
 @dashboard_bp.route("/bloodbank_requests", methods = ['GET', 'POST'])
 @login_required
 def bloodbank_requests():
-    user_id = session.get('user_id')
+    user_id = current_user.id
 
     if not user_id:
-        return redirect('/login')
+        return redirect(url_for('auth.login'))
 
     bloodbank = BloodBank.query.filter_by(user_id=user_id).first()
     requests = BloodRequest.query.filter_by(bloodbank_id=bloodbank.id).all()

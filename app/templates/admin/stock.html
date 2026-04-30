@@ -1,5 +1,36 @@
 {% extends "admin/base.html" %}
 
 {% block content %}
-<h1>Stock</h1>
+<h1>Stocks</h1>
+
+<form method="GET" action="{{ url_for('admin.stock') }}" class="filter-bar">Filter by:
+
+    <label>Bank ID</label>
+    <input type="number" name="bloodbanks_id" min="0" placeholder="Blood bank ID">
+
+    <button type="submit">Apply</button>
+    <a href="{{ url_for('admin.stock') }}" class="reset-btn">Reset</a>
+</form><br>
+
+<table class="table">
+  <tr>
+    <th>Sl.No.</th>
+    <th>ID</th>
+    <th>Bank ID</th>
+    <th>Blood Bank</th>
+    <th>Blood Type</th>
+    <th>Quantity(ml)</th>
+  </tr>
+
+  {% for s in stock %}
+  <tr>
+    <td>{{ loop.index }}</td>
+    <td>{{ s.id }}</td>
+    <td>{{ s.bloodbank_id }}</td>
+    <td>{{ s.bloodbank.user.fullname }}</td>
+    <td>{{ s.blood_type }}</td>
+    <td>{{ s.quantity_ml }}</td>
+  </tr>
+  {% endfor %}
+</table>
 {% endblock %}

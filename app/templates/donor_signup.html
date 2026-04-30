@@ -45,24 +45,52 @@
             id="dob",
             required><br><br>
 
-        <label for="state">State:</label><br>
-        <input
-            autocomplete="off"
-            type="text"
-            id="state"
-            name="state"
-            placeholder="State"><br><br>
+        <!-- ADDRESS -->
+        <lable>Address:<br>
+        <select name='state' id="state">
+            <option value="">Select State</option>
+        </select>
 
-        <label for="city">City:</label><br>
-        <input
-            autocomplete="off"
-            type="text"
-            id="city"
-            name="city"
-            placeholder="City"><br><br>
+        <select name='district' id="district">
+            <option value="">Select District</option>
+        </select>
+
+        <input type="text" name="city" placeholder="City/Town/Area"><br><br>
+        </lable>
 
         <button type="submit">
                 Submit
         </button><br><br>
     </form>
+
+<!-- FETCH Location -->
+<script>
+fetch("/static/data/india_locations.json")
+.then(res => res.json())
+.then(data => {
+
+    const stateSelect = document.getElementById("state");
+    const districtSelect = document.getElementById("district");
+
+    // Load states
+    data.forEach((stateObj, index) => {
+        stateSelect.innerHTML += `<option value="${stateObj.stateName}">${stateObj.stateName}</option>`;
+    });
+
+    // When state changes
+    stateSelect.addEventListener("change", () => {
+        districtSelect.innerHTML = '<option value="">Select District</option>';
+
+        const selectedState = data.find(
+            state => state.stateName === stateSelect.value
+        );
+
+        selectedState.districts.forEach(district => {
+            districtSelect.innerHTML += `<option value="${district.name}">${district.name}</option>`;
+        });
+    });
+
+});
+</script>
+
 {% endblock %}

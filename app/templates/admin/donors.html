@@ -1,9 +1,9 @@
 {% extends "admin/base.html" %}
 
 {% block content %}
-<h1>Blood Banks</h1>
+<h1>Donors</h1>
 
-<form method="GET" action="{{ url_for('admin.bloodbanks') }}" class="filter-bar">
+<form method="GET" action="{{ url_for('admin.donors') }}" class="filter-bar">
 
     <label>State:</label>
     <select name="state" id="state">
@@ -15,15 +15,15 @@
         <option value="" disabled selected>Select District</option>
     </select>
 
-    <label>Verification:</label>
-    <select name="is_verified">
+    <label>Availability:</label>
+    <select name="availability">
         <option value="">All</option>
-        <option value="true" {% if selected_verified == 'true' %}selected{% endif %}>Verified</option>
-        <option value="false" {% if selected_verified == 'false' %}selected{% endif %}>Not Verified</option>
+        <option value="true" {% if selected_availability == 'true' %}selected{% endif %}>Available</option>
+        <option value="false" {% if selected_availability == 'false' %}selected{% endif %}>Not Available</option>
     </select>
 
     <button type="submit">Apply</button>
-    <a href="{{ url_for('admin.bloodbanks') }}">Reset</a>
+    <a href="{{ url_for('admin.donors') }}">Reset</a>
 
 </form><br>
 
@@ -32,31 +32,34 @@
     <th>Sl.No.</th>
     <th>ID</th>
     <th>User ID</th>
-    <th>Blood bank</th>
+    <th>Name</th>
     <th>State</th>
     <th>District</th>
-    <th>Helpline No.</th>
-    <th>License No.</th>
-    <th>Verification</th>
+    <th>Blood Group</th>
+    <th>Availability</th>
     <th>Action</th>
   </tr>
 
-  {% for b in bloodbanks %}
+  {% for d in donors %}
   <tr>
     <td>{{ loop.index }}</td>
-    <td>{{ b.id }}</td>
-    <td>{{ b.user_id }}</td>
-    <td>{{ b.user.fullname }}</td>
-    <td>{{ b.state }}</td>
-    <td>{{ b.district }}</td>
-    <td>{{ b.helpline_number }}</td>
-    <td>{{ b.license_number }}</td>
-    <td>{{ b.user.is_verified }}</td>
+    <td>{{ d.id }}</td>
+    <td>{{ d.user_id }}</td>
+    <td>{{ d.user.fullname }}</td>
+    <td>{{ d.state }}</td>
+    <td>{{ d.district }}</td>
+    <td>{{ d.blood_type }}</td>
     <td>
-      <!-- Delete -->
-      <a href="{{ url_for('admin.delete_bloodbank', bloodbanks_id=b.id) }}"
-        class="btn btn-dark btn-sm"
-        onclick="return confirm('Are you sure?')">🗑 Delete</a>
+        {% if d.availability %}
+            Available
+        {% else %}
+            Not Available
+        {% endif %}
+    </td>
+    <td>
+      <a href="{{ url_for('admin.delete_donor', donor_id=d.id) }}"
+         class="btn btn-dark btn-sm"
+         onclick="return confirm('Are you sure?')">🗑 Delete</a>
     </td>
   </tr>
   {% endfor %}
@@ -79,7 +82,6 @@ fetch("{{ url_for('static', filename='data/india_locations.json') }}")
         stateSelect.innerHTML += `<option value="${stateObj.stateName}" ${selected}>${stateObj.stateName}</option>`;
     });
 
-    // Load districts if state already selected
     function loadDistricts(stateName) {
         districtSelect.innerHTML = '<option value="">Select District</option>';
 
@@ -95,16 +97,15 @@ fetch("{{ url_for('static', filename='data/india_locations.json') }}")
         }
     }
 
-    // If page reload with selected state
     if (selectedState) {
         loadDistricts(selectedState);
     }
 
-    // On change
     stateSelect.addEventListener("change", () => {
         loadDistricts(stateSelect.value);
     });
 
 });
 </script>
+
 {% endblock %}

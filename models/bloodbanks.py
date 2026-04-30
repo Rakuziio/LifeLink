@@ -25,5 +25,6 @@ class BloodStock(db.Model):
     id = db.Column(db.Integer, primary_key=True)
 
     bloodbank_id = db.Column(db.Integer, db.ForeignKey('blood_banks.id'))
+
     blood_type = db.Column(db.String(5))
     quantity_ml = db.Column(db.Integer, default=0)

@@ -1,5 +1,56 @@
 {% extends "admin/base.html" %}
 
 {% block content %}
-<h1>Requests</h1>
+<h1>Request</h1>
+<form method="GET" action="{{ url_for('admin.requests') }}" class="filter-bar">Filter by status:
+
+    <select name="status">
+        <option value="">All Status</option>
+        <option value="pending" {{ 'selected' if request.args.get('status') == 'pending' else '' }}>Pending</option>
+        <option value="Approved" {{ 'selected' if request.args.get('status') == 'Approved' else '' }}>Approved</option>
+        <option value="Rejected" {{ 'selected' if request.args.get('status') == 'Rejected' else '' }}>Rejected</option>
+        <option value="Completed" {{ 'selected' if request.args.get('status') == 'Completed' else '' }}>Completed</option>
+        <option value="Cancelled" {{ 'selected' if request.args.get('status') == 'Cancelled' else '' }}>Cancelled</option>
+    </select>
+    <button type="submit">Apply</button>
+    <a href="{{ url_for('admin.requests') }}" class="reset-btn">Reset</a>
+
+</form><br>
+
+<table class="table">
+  <tr>
+    <th>Sl.No.</th>
+    <th>ID</th>
+    <th>Blood Bank ID</th>
+    <th>Patient</th>
+    <th>Blood Type</th>
+    <th>Quantity(ml)</th>
+    <th>Contact</th>
+    <th>Hospital Name</th>
+    <th>Request Date</th>
+    <th>Status</th>
+    <th>Action</th>
+  </tr>
+
+  {% for r in requests %}
+  <tr>
+    <td>{{ loop.index }}</td>
+    <td>{{ r.id }}</td>
+    <td>{{ r.bloodbank_id }}</td>
+    <td>{{ r.patient_name }}</td>
+    <td>{{ r.blood_type }}</td>
+    <td>{{ r.quantity_ml }}</td>
+    <td>{{ r.contact }}</td>
+    <td>{{ r.hospital_name }}</td>
+    <td>{{ r.request_date }}</td>
+    <td>{{ r.status }}</td>
+    <td>
+      <!-- Delete -->
+      <a href="{{ url_for('admin.delete_request', requests_id=r.id) }}"
+        class="btn btn-dark btn-sm"
+        onclick="return confirm('Are you sure?')">🗑 Delete</a>
+    </td>
+  </tr>
+  {% endfor %}
+</table>
 {% endblock %}

@@ -2,4 +2,19 @@
 
 {% block content %}
 <h1>Dashboard</h1>
+<div class="stats">
+
+    <div class="card">Users: {{ total_users }}</div>
+    <div class="card">Donors: {{ total_donors }}</div>
+    <div class="card">Blood Banks: {{ total_bloodbanks }}</div>
+
+    <hr>
+    <div class="card">Requests: {{ total_requests }}</div>
+    <div class="card">Pending: {{ pending_requests }}</div>
+    <div class="card">Approved: {{ approved_requests }}</div>
+    <div class="card">Rejected: {{ rejected_requests }}</div>
+    <div class="card">Cancelled: {{ cancelled_requests }}</div>
+    <div class="card">Completed: {{ completed_requests }}</div>
+
+</div>
 {% endblock %}
